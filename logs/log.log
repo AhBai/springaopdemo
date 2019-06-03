@@ -1,0 +1,8 @@
+2019-05-28 16:43:06,211 INFO [com.ahbai.MyTest] - slf4j for info
+2019-05-28 16:43:06,211 ERROR [com.ahbai.MyTest] - slf4j for error
+2019-05-28 16:43:06,211 WARN [com.ahbai.MyTest] - slf4j for warn
+2019-05-28 16:43:06,211 INFO [com.ahbai.MyTest] - slf4j message is : Hello SLF4J
+2019-05-28 20:04:16,074 INFO [com.ahbai.MyTest] - slf4j for info
+2019-05-28 20:04:16,075 ERROR [com.ahbai.MyTest] - slf4j for error
+2019-05-28 20:04:16,075 WARN [com.ahbai.MyTest] - slf4j for warn
+2019-05-28 20:04:16,079 INFO [com.ahbai.MyTest] - slf4j message is : Hello SLF4J

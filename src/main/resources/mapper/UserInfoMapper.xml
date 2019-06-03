@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahbai.mapper.UserInfoMapper">
+        <!--用户登录-->
+    <select id="findLogin" resultType="com.ahbai.pojo.UserInfo" parameterType="com.ahbai.pojo.UserInfo">
+        select * from userinfo where username=#{userName} and password=#{password}
+    </select>
+    <!--跳转用户维护+模糊查询-->
+    <select id="getListUserInfo" resultType="com.ahbai.pojo.UserInfo" parameterType="com.ahbai.vo.UserInfoVo">
+        <bind name="patterName" value="'%' + pattern + '%'" />
+        select * from userinfo
+        <where>
+            <if test="patterName!=null and patterName!=''">
+               or username like #{patterName}
+            </if>
+            <if test="patterName!=null and patterName!=''">
+               or phone like #{patterName}
+            </if>
+            <if test="patterName!=null and patterName!=''">
+               or regemail like #{patterName}
+            </if>
+        </where>
+    </select>
+        <!--新添-->
+    <insert id="addUserInfo" parameterType="com.ahbai.pojo.UserInfo">
+        insert into userinfo values (default,#{userName},#{password},#{regEmail},#{phone},#{icon})
+    </insert>
+
+    <!--用id查找-->
+    <select id="findById" resultType="com.ahbai.pojo.UserInfo" parameterType="int">
+        select * from userinfo where userid=#{id}
+    </select>
+    <!--修改-->
+    <update id="updateUser" parameterType="com.ahbai.pojo.UserInfo">
+        update userinfo set username=#{userName},phone=#{phone},regemail=#{regEmail},icon=#{icon}
+        where userid=#{userId}
+    </update>
+    <!--用id查找role-->
+    <select id="getRole" resultType="com.ahbai.dto.RoleDto" parameterType="int">
+    SELECT r.*,ISNULL(ur.`roleid`) nulls FROM user_role ur RIGHT JOIN roleinfo r ON ur.`roleid`=r.`roleid` AND ur.`userid`=#{userId}
+    </select>
+
+<!--根据userID修改user_role-->
+    <delete id="deleteRole" parameterType="com.ahbai.vo.UserInfoVo">
+        delete from user_role where userid=#{userId}
+    </delete>
+    <insert id="addRole" parameterType="com.ahbai.vo.UserInfoVo">
+        insert into user_role values
+        <foreach collection="roleIds" item="roleId" index="index" separator=",">
+            (default,#{userId},#{roleId})
+        </foreach>
+    </insert>
+</mapper>
+
+<!--
+<select id="findAll" resultType="com.ahbai.pojo.UserInfo" parameterType="com.ahbai.vo.UserInfoVo">
+        select * from userinfo where userid=#{id}
+    </select>
+    <!-添加数据->
+<insert id="allUserInfo" parameterType="com.ahbai.pojo.UserInfo">
+        insert into userinfo values (default,#{userName},#{password},#{regEmail},#{phone},#{icon})
+    </insert>
+        <!-修改数据->
+<update id="updateUserInfo" parameterType="com.ahbai.pojo.UserInfo">
+update userinfo
+<set>
+    <if test="userName!=null and userName!=''">
+        username=#{userName},
+    </if>
+    <if test="password!=null and password!=''">
+        password=#{password},
+    </if>
+    <if test="regEmail!=null and regEmail!=''">
+        regEmail=#{regEmail},
+    </if>
+    <if test="phone!=null and phone!=''">
+        phone=#{phone},
+    </if>
+    <if test="icon!=null and icon!=''">
+        icon=#{icon},
+    </if>
+</set>
+where userid=#{userId}
+</update>
+        <!-删除数据->
+<delete id="deleteUserIfon" parameterType="com.ahbai.vo.UserInfoVo">
+        delete from userinfo where userid=#{id}
+    </delete>
+-->

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="GB18030">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keys" content="">
+    <meta name="author" content="">
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/login.css">
+	<style>
+        .error{
+            color: red;
+        }
+	</style>
+  </head>
+  <body>
+
+  <script src="jquery/jquery-2.1.1.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+
+  <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+  <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+  <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js" charset="UTF-8"></script>
+
+
+  <script>
+
+
+
+          function addUser(){
+               var param = {"userName": $("#userName").val(), "password": $("#password").val(),"phone": $("#phone").val(),"icon": $("#icon").val(),"regEmail": $("#regEmail").val()}
+               $.ajax({
+                   type:'post',
+                   url: '/addUserInfo',
+                   data:param,
+                   success: function (date) {
+                       if (date == true){
+                           window.location.href="member.html"
+                       }
+                   },
+                   error:function(date){
+                       if (date == false){
+                           window.location.href="reg.html"
+                       }
+                   },
+                   dataType:"json"
+               });
+           }
+
+
+      $().ready(function() {
+          $("#validfrom").validate({
+              rules: {
+                  userName:{
+                      required: true,
+                      minlength:2
+                  },
+                  password: {
+                      required: true,
+                      minlength:3
+                  },
+                  email: {
+                      required: true,
+                      email: true
+                  },
+                  phone: {
+                      required: true,
+                      phone:true,
+                  },
+              },
+              messages: {
+                  userName: {
+                      required: "请输入用户名",
+                      minlength: "用户名必需由两个字母组成"
+                  },
+                  password: {
+                      required: "请输入密码",
+                      minlength: "密码长度不能小于 3 个字母"
+                  },
+                  email: "请输入一个正确的邮箱",
+
+              }
+              ,
+              submitHandler :function (form) {
+                 addUser();
+              }
+          })
+      });
+
+         jQuery.validator.addMethod("phone", function(value, element) {
+             var length = value.length;
+             var mobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/;
+             return this.optional(element) || (length == 11 && mobile.test(value));
+         }, "请填写正确的手机号码");//可以自定义默认提示信息
+
+  </script>
+
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <div><a class="navbar-brand" href="index.html" style="font-size:32px;">千峰-创意产品众筹平台</a></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <form class="form-signin" role="form" id="validfrom">
+
+          <fieldset>
+        <h2 class="form-signin-heading"><i class="glyphicon glyphicon-log-in"></i> 用户注册</h2>
+		  <div class="form-group has-success has-feedback">
+			<input type="text" class="form-control" name="userName" id="userName" placeholder="请输入登录账号" autofocus>
+			<span class="glyphicon glyphicon-user form-control-feedback"></span>
+		  </div>
+		  <div class="form-group has-success has-feedback">
+			<input type="text" class="form-control" name="password" id="password" placeholder="请输入登录密码" style="margin-top:10px;">
+			<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+		  </div>
+		  <div class="form-group has-success has-feedback">
+			<input type="text" class="form-control" name="email" id="regEmail" placeholder="请输入邮箱地址" style="margin-top:10px;">
+			<span class="glyphicon glyphicon glyphicon-envelope form-control-feedback"></span>
+		  </div>
+          <div class="form-group has-success has-feedback">
+              <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入电话" style="margin-top:10px;">
+              <span class="glyphicon glyphicon glyphicon-phone form-control-feedback"></span>
+          </div>
+        <div class="checkbox">
+          <label>
+            忘记密码
+          </label>
+          <label style="float:right">
+            <a href="login.html">我有账号</a>
+          </label>
+        </div>
+        <!--<a class="btn btn-lg btn-success btn-block" onclick="addUser()"> 注册</a>-->
+        <input class="btn btn-lg btn-success btn-block" type="submit" value="提交" >
+          </fieldset>
+      </form>
+    </div>
+
+  </body>
+
+</html>

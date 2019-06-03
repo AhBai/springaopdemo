@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单拦</title>
+
+    <meta charset="GB18030">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .tree li {
+            list-style-type: none;
+            cursor:pointer;
+        }
+        table tbody tr:nth-child(odd){background:#F4F4F4;}
+        table tbody td:nth-child(even){color:#C00;}
+    </style>
+</head>
+<body>
+
+
+        <ul style="padding-left:0px;" class="list-group" id="ul_ur">
+            <li class="list-group-item tree-closed" >
+                <a href="main.html"><i class="glyphicon glyphicon-dashboard"></i> 控制面板</a>
+            </li>
+
+
+
+
+        </ul>
+
+
+<script src="jquery/jquery-2.1.1.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="script/docs.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".list-group-item").click(function(){
+            if ( $(this).find("ul") ) {
+                $(this).toggleClass("tree-closed");
+                if ( $(this).hasClass("tree-closed") ) {
+                    $("ul", this).hide("fast");
+                } else {
+                    $("ul", this).show("fast");
+                }
+            }
+        });
+
+        $.ajax({
+            type:'get',
+            url: '/getMenuInfos',
+            success:function(date){
+                var bigLi="";
+                var ulUr = $("#ul_ur");
+                console.log(date)
+                $(date).each(function (index, elment) {
+                    console.log(elment)
+                    if (index == 0){
+                        bigLi+="<li class=\"list-group-item\">\n" +
+                            "                <span><i class=\"glyphicon glyphicon glyphicon-tasks\"></i>"+elment.name+"<span class=\"badge\" style=\"float:right\">"+elment.children.length+"</span></span>\n" +
+                            "                <ul style=\"margin-top:10px;\">";
+                    }else{
+                        bigLi+="<li class=\"list-group-item tree-closed\">\n" +
+                            "                <span><i class=\"glyphicon glyphicon glyphicon-tasks\"></i>"+elment.name+"<span class=\"badge\" style=\"float:right\">"+elment.children.length+"</span></span>\n" +
+                            "                <ul style=\"margin-top:10px; display: none\">";
+                    }
+                        if (elment.children.length!=0) {
+                            $(elment.children).each(function (i, c) {
+                                bigLi += "<li style=\"height:30px;\">\n" +
+                                    "                        <a href=\"user.html\" style=\"color:red;\"><i class=\"glyphicon glyphicon-user\"></i> " + c.name + "</a>\n" +
+                                    "                    </li>";
+                            });
+                        }
+                       bigLi+="</ul>" +
+                           "</li>";
+                });
+                ulUr.append(bigLi);
+                $(".list-group-item").click(function(){
+                    if ( $(this).find("ul") ) {
+                        $(this).toggleClass("tree-closed");
+                        if ( $(this).hasClass("tree-closed") ) {
+                            $("ul", this).hide("fast");
+                        } else {
+                            $("ul", this).show("fast");
+                        }
+                    }
+                });
+            },
+            dataType:"json"
+        });
+
+    });
+
+
+</script>
+</body>
+</html>

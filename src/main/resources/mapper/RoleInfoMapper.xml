@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahbai.mapper.RoleInfoMapper">
+
+    <resultMap id="getMenuInfo" type="com.ahbai.dto.MenuInfoDto">
+        <id column="menuid" property="id"/>
+        <result column="menuname" property="name"/>
+        <result column="menu_url" property="url"/>
+        <result column="menuicon" property="icon"/>
+        <result column="parentid" property="pid"/>
+        <collection property="children" ofType="com.ahbai.dto.MenuInfoDto">
+            <id column="c_id" property="id"/>
+            <result column="c_name" property="name"/>
+            <result column="c_url" property="url"/>
+            <result column="c_icon" property="icon"/>
+            <result column="c_pid" property="pid"/>
+            <result column="checked" property="checked"/>
+
+        </collection>
+    </resultMap>
+
+    <!--获取roleInfo加模糊查找-->
+    <select id="getRoleInfos" resultType="com.ahbai.pojo.RoleInfo" parameterType="com.ahbai.dto.RoleInfoDto">
+        <bind name="patterName" value="'%' + pattern + '%'" />
+        select * from roleinfo
+        <where>
+            <if test="patterName!=null and patterName!=''">
+                or rolename like #{patterName}
+            </if>
+            <if test="patterName!=null and patterName!=''">
+                or shortname like #{patterName}
+            </if>
+        </where>
+    </select>
+
+    <select id="getMenus" resultMap="getMenuInfo" parameterType="int">
+        SELECT mef.*,tb1.menuid c_id,tb1.menuname c_name,tb1.menu_url c_url,tb1.menuicon c_icon,tb1.parentid c_pid,!ISNULL(tb1.menuid) cheaked
+        FROM menuinfo mef LEFT JOIN
+        (SELECT DISTINCT mf.* FROM role_menu rm,menuinfo mf WHERE rm.`menuid`=mf.`menuid` AND rm.`roleid` IN
+         (SELECT ur.`roleid` FROM userinfo uf,user_role ur,roleinfo rf
+        WHERE uf.`userid`=ur.`userid` AND ur.`roleid`=rf.`roleid` AND uf.`userid`=#{userId})) tb1 ON tb1.parentid=mef.`menuid`
+    </select>
+
+    <select id="getMenuInfos" resultMap="getMenuInfo" parameterType="int">
+        SELECT DISTINCT * FROM menuinfo mf,
+        (SELECT m.`menuid` c_id,m.`menuname` c_name,m.`menu_url` c_url,m.`menuicon` c_icon,m.`parentid` p_id
+        FROM roleinfo ro,role_menu rm,menuinfo m
+        WHERE ro.`roleid`=rm.`roleid` AND rm.`menuid`=m.`menuid`
+        AND ro.`roleid` IN
+        (SELECT r.`roleid` FROM userinfo u,user_role ur,roleinfo r
+        WHERE u.`userid`=ur.`userid` AND ur.`roleid`=r.`roleid` AND u.`userid`=#{id})
+        ) tb WHERE mf.`menuid`=tb.p_id
+    </select>
+
+</mapper>
